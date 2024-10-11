@@ -157,10 +157,7 @@ describe("CREACoin", function () {
     await creaCoin.setMintAmount(amount);
 
     const balanceBefore = await creaCoin.balanceOf(otherAccount);
-    const instance = creaCoin.connect(otherAccount);
-
-    await instance.mint();
-
+   
     const balanceAfter = await creaCoin.balanceOf(otherAccount);
     expect(balanceAfter ==  balanceBefore + amount );
 
@@ -173,19 +170,14 @@ describe("CREACoin", function () {
     const amount = 1000n;
     await creaCoin.setMintAmount(amount);
 
-    const balanceBeforeOther = await creaCoin.balanceOf(otherAccount);
-    const balanceBeforeOwner = await creaCoin.balanceOf(owner);
+    const balanceBeforeOther = await creaCoin.balanceOf(owner);
+    await creaCoin.mint(owner);
 
-    const instance = creaCoin.connect(otherAccount);
+    await creaCoin.mint(otherAccount);
 
-    await instance.mint();
-    await creaCoin.mint();
-
-    const balanceAfterOther = await creaCoin.balanceOf(otherAccount);
-    const balanceAfterOwner= await creaCoin.balanceOf(owner);
+    const balanceAfterOther = await creaCoin.balanceOf(owner);
 
     expect(balanceAfterOther ==  balanceBeforeOther + amount );
-    expect(balanceAfterOwner ==  balanceBeforeOwner + amount );
 
   });
 
@@ -198,15 +190,15 @@ describe("CREACoin", function () {
 
     await creaCoin.setMintAmount(amount);
 
-    const balanceBeforeOwner = await creaCoin.balanceOf(owner);
+    const balanceBeforeOwner = await creaCoin.balanceOf(otherAccount);
 
-    await creaCoin.mint();
+    await creaCoin.mint(otherAccount);
 
     await time.increase(timeDelay);
 
-    await creaCoin.mint();
+    await creaCoin.mint(otherAccount);
 
-    const balanceAfterOwner= await creaCoin.balanceOf(owner);
+    const balanceAfterOwner= await creaCoin.balanceOf(otherAccount);
 
     expect(balanceAfterOwner ==  balanceBeforeOwner + amount );
 
@@ -251,7 +243,7 @@ describe("CREACoin", function () {
   it("Should NOT mint", async function () {
     const {creaCoin, owner, otherAccount } = await loadFixture(deployFixture);
 
-    await expect( creaCoin.mint()).revertedWith("Minting is not enabled.");
+    await expect( creaCoin.mint(otherAccount)).revertedWith("Minting is not enabled.");
 
   });
 
@@ -264,9 +256,9 @@ describe("CREACoin", function () {
     
     await creaCoin.setMintAmount(amount);
     
-    await creaCoin.mint();
+    await creaCoin.mint(otherAccount);
 
-    await expect( creaCoin.mint()).revertedWith("You cannot mint twice in a row.");;
+    await expect( creaCoin.mint(otherAccount)).revertedWith("You cannot mint twice in a row.");;
 
   });
 

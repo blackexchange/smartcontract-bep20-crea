@@ -19,12 +19,12 @@ contract CREACoin is ERC20 {
 
     }
 
-    function mint()  public  {
+    function mint( address to)  public restricted  {
 
         require(_mintAmount > 0,"Minting is not enabled.");
-        require(block.timestamp > nextMint[msg.sender],"You cannot mint twice in a row.");
-        _mint(msg.sender, _mintAmount);
-        nextMint[msg.sender]=block.timestamp + _mintDelay;
+        require(block.timestamp > nextMint[to],"You cannot mint twice in a row.");
+        _mint(to, _mintAmount);
+        nextMint[to]=block.timestamp + _mintDelay;
         
     }
 
